@@ -13,10 +13,9 @@ public class Perpustakaan {
         System.out.println("Buku berhasil ditambahkan");
     }
 
-    public void peminjaman(String id) {
-        String idPeminjam = input.nextLine();
+    public void peminjaman(String idBuku, String idPeminjam) {
         for(Buku b : listBuku) {
-            if(b.getID().equals(id)) {
+            if(b.getID().equals(idBuku)) {
                 b.setTanggalPinjam(LocalDate.now());
                 b.setKodePeminjam(idPeminjam);
             }
@@ -28,6 +27,6 @@ public class Perpustakaan {
     }
 
     public void denda() {
-        
+
     }
 }
