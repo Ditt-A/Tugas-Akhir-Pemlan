@@ -9,6 +9,7 @@ public class Buku {
     private TreeSet<String> Pengarang;
     private String kodePeminjam = null;
     private LocalDate tanggalDiPinjam = null;
+    private boolean dipinjam = false;
 
     public Buku(String idBuku ,String judulBuku, TreeSet<String> Pengarang) {
         this.idBuku = idBuku;
@@ -24,15 +25,14 @@ public class Buku {
         return this.judulBuku;
     }
 
-    public String getPengarang() {
-        String pengarang = "";
-        int count = 0;
-        for(String s : Pengarang) {
-            pengarang += s;
-            if(count < (Pengarang.size())) {
-                pengarang += ", ";
-            }
+    public boolean getStatus() {
+        return this.dipinjam;
+    }
 
+    public StringJoiner getPengarang() {
+        StringJoiner pengarang = new StringJoiner(",", "[", "]");
+        for(String s : Pengarang) {
+            pengarang.add(s);
         }
         return pengarang;
     }
@@ -55,7 +55,9 @@ public class Buku {
         this.tanggalDiPinjam = n;
     }
 
-
+    public String toString() {
+        return idBuku + ',' + judulBuku + ',' + getPengarang();
+    }
 
 
 }
