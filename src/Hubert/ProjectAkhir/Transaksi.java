@@ -1,4 +1,4 @@
-package semester2.ProjectAkhir;
+package Hubert.ProjectAkhir;
 
 import java.time.*;
 import java.util.*;
