@@ -71,6 +71,7 @@ class BukuInputGUI extends JFrame {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Jumlah pengarang harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        perpustakaan.SimpanBuku(kode,judul, pengarangSet);
     }
 
     public void inputNamaPengarang(String kode, String judul) {
@@ -88,7 +89,6 @@ class BukuInputGUI extends JFrame {
             JOptionPane.showMessageDialog(null, "Nama pengarang tidak boleh kosong.");
             inputNamaPengarang(kode, judul);
         }
-        perpustakaan.SimpanBuku(kode,judul, pengarangSet);
     }
 
     public void search(){
@@ -151,8 +151,12 @@ class BukuInputGUI extends JFrame {
             perpustakaan.hapusBuku(kode);
             JOptionPane.showMessageDialog(null, "Buku berhasil didelete!");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Kode yang diinput tidak valid!");
+            JOptionPane.showMessageDialog(this, e.getMessage());
         }
+    }
+
+    public static void main(String[] args) {
+        BukuInputGUI gui = new BukuInputGUI();
     }
 }
 

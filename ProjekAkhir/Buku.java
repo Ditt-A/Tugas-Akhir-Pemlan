@@ -12,7 +12,7 @@ public class Buku {
     private String judulBuku;
     private TreeSet<String> Pengarang;
     private boolean dipinjam = false;
-    File bukuFile = new File("Data/dataBuku.txt");
+    File bukuFile = new File("dataBuku.txt");
 
 
     public Buku(String kodeBuku ,String judulBuku, TreeSet<String> Pengarang) {
@@ -23,11 +23,9 @@ public class Buku {
             FileWriter fw = new FileWriter(bukuFile, true);
             BufferedWriter bw = new BufferedWriter(fw);
             StringBuilder sb = new StringBuilder();
-            String s = kodeBuku + ";" + judulBuku +";";
-            for(String str : Pengarang){
-                s += str + ",";
-            }
-            sb.append(s);
+            sb.append(kodeBuku).append(";")
+                    .append(judulBuku).append(";")
+                    .append(String.join(",", Pengarang));
             bw.write(sb.toString());
             bw.newLine();
             bw.close();
