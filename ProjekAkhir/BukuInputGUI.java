@@ -1,12 +1,16 @@
 package semester2.ProjekAkhir;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.TreeSet;
 import java.awt.event.*;
 
 class BukuInputGUI extends JFrame {
     private JTextField kodeField, judulField, jumlahField;
+    private JTable table;
+    private DefaultTableModel tableModel;
     private TreeSet<String> pengarangSet = new TreeSet<>();
     private int jumlahPengarang;
     private int pengarangKe = 0;
@@ -39,8 +43,14 @@ class BukuInputGUI extends JFrame {
         add(SearchButton);
         add(EditButton);
         add(DeleteButton);
-
         add(new JLabel());
+
+        String[] kolom = {"Kode", "Judul", "Pengarang"};
+        tableModel = new DefaultTableModel(kolom, 0);
+        table = new JTable(tableModel);
+        add(new JScrollPane(table));
+        tampilkanTabelBuku();
+
 
         LanjutButton.addActionListener(e -> daftarBuku());
         SearchButton.addActionListener(e -> searchBuku());
@@ -52,7 +62,6 @@ class BukuInputGUI extends JFrame {
             }
         });
         DeleteButton.addActionListener(e -> deleteBuku());
-
         setVisible(true);
     }
 
@@ -77,7 +86,12 @@ class BukuInputGUI extends JFrame {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Jumlah pengarang harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        perpustakaan.simpanBuku(kode,judul, pengarangSet);
+        try {
+            perpustakaan.simpanBuku(kode, judul, pengarangSet);
+            tampilkanTabelBuku();
+        }catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
     }
 
     public void inputNamaPengarang(String kode, String judul) {
@@ -97,19 +111,54 @@ class BukuInputGUI extends JFrame {
         }
     }
 
-    public void searchBuku(){
-        try{
-            String kode = kodeField.getText().trim();
-            if(perpustakaan.cariBuku(kode) != null){
-                JOptionPane.showMessageDialog(null, perpustakaan.cariBuku(kode));
+    public void searchBuku() {
+        JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
+
+        JLabel labelKriteria = new JLabel("Cari berdasarkan:");
+        String[] kriteria = {"Kode", "Judul", "Pengarang"};
+        JComboBox<String> comboBox = new JComboBox<>(kriteria);
+
+        JLabel labelInput = new JLabel("Masukkan nilai:");
+        JTextField inputField = new JTextField();
+
+        panel.add(labelKriteria);
+        panel.add(comboBox);
+        panel.add(labelInput);
+        panel.add(inputField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Cari Buku", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String dipilih = (String) comboBox.getSelectedItem();
+            String input = inputField.getText().trim();
+
+            if (input.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Input tidak boleh kosong!");
+                return;
             }
-            else{
-                JOptionPane.showMessageDialog(null, "Buku tidak terdaftar!");
+
+            String hasil = null;
+            try {
+                if (dipilih.equals("Kode")) {
+                    hasil = perpustakaan.cariBukuKode(input);
+                } else if (dipilih.equals("Judul")) {
+                    hasil = perpustakaan.cariBukuJudul(input);
+                } else if (dipilih.equals("Pengarang")) {
+                    hasil = perpustakaan.cariBukuPengarang(input);
+                }
+
+                if (hasil != null) {
+                    JOptionPane.showMessageDialog(null, hasil, "Hasil Pencarian", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Buku tidak ditemukan!", "Hasil Pencarian", JOptionPane.WARNING_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "ERROR: " + e.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Kode Buku invalid!");
         }
     }
+
+
     public void editBuku() throws Exception {
         String kode = kodeField.getText().trim();
         String judul = judulField.getText().trim();
@@ -135,6 +184,7 @@ class BukuInputGUI extends JFrame {
 
     public void editNamaPengarang(String kode, String judul) throws Exception{
         if (pengarangKe > jumlahPengarang) {
+            perpustakaan.editBuku(kode,judul, pengarangSet);
             JOptionPane.showMessageDialog(null, "Buku berhasil diedit!");
             return;
         }
@@ -146,9 +196,8 @@ class BukuInputGUI extends JFrame {
             inputNamaPengarang(kode, judul);
         } else {
             JOptionPane.showMessageDialog(null, "Nama pengarang tidak boleh kosong.");
-            inputNamaPengarang(kode, judul);
+            editNamaPengarang(kode, judul);
         }
-        perpustakaan.editBuku(kode,judul, pengarangSet);
     }
 
     public void deleteBuku() {
@@ -165,6 +214,26 @@ class BukuInputGUI extends JFrame {
         }
     }
 
+    public void tampilkanTabelBuku(){
+        tableModel.setRowCount(0);
+        try{
+            File file = new File("dataBuku.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(";");
+                String kode = parts[0];
+                String judul = parts[1];
+                String pengarang = parts[2];
+                tableModel.addRow(new Object[]{kode,judul, pengarang});
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static void main(String[] args) {
         BukuInputGUI gui = new BukuInputGUI();
     }

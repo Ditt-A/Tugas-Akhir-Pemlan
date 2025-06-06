@@ -25,7 +25,8 @@ public class Buku {
             StringBuilder sb = new StringBuilder();
             sb.append(kodeBuku).append(";")
                     .append(judulBuku).append(";")
-                    .append(String.join(",", Pengarang));
+                    .append(getPengarang().toString().trim());
+
             String hasil = sb.toString();
             if (!hasil.isBlank()) {
                 bw.write(hasil);
@@ -63,7 +64,7 @@ public class Buku {
     }
 
     public StringJoiner getPengarang() {
-        StringJoiner pengarang = new StringJoiner(",", "[", "]");
+        StringJoiner pengarang = new StringJoiner(", ");
         for(String s : Pengarang) {
             pengarang.add(s);
         }

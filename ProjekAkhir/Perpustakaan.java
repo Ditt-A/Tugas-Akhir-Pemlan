@@ -1,32 +1,85 @@
 package semester2.ProjekAkhir;
 
-import javax.swing.*;
 import java.io.*;
-import java.time.LocalDate;
 import java.util.*;
 
 
 public class Perpustakaan {
     ArrayList<Buku> listBuku;
-    ArrayList<Pengguna> listPengguna;
+    ArrayList<Mahasiswa> listMahasiswa;
     HashMap<String, String> daftarPinjam;
 
     public Perpustakaan() {
         listBuku = new ArrayList<>();
-        listPengguna = new ArrayList<>();
+        listMahasiswa = new ArrayList<>();
         daftarPinjam = new HashMap<>();
     }
 
     //Method untuk Tab Buku
-    public void simpanBuku(String kode, String judul, TreeSet<String> pengarang){
+    public void simpanBuku(String kode, String judul, TreeSet<String> pengarang) throws Exception{
+        for(Buku list : listBuku){
+            if(list.getID().equals(kode)){
+                throw new Exception("Kode Buku Sudah Ada!");
+            }
+        }
         listBuku.add(new Buku(kode, judul, pengarang));
     }
 
-    public String cariBuku(String kode){
-        for (Buku buku : listBuku) {
-            if(buku.getID().equals(kode)){
-                return "Kode Buku: "+ buku.getID() + " Judul: "+ buku.getJudul()+ " Pengarang: "+ buku.getPengarang();
+    public String cariBukuKode(String kode){
+        try{
+            File file = new File("dataBuku.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(";");
+                if(parts[0].trim().equals(kode)){
+                    return "Kode Buku: "+ parts[0] + " Judul: "+ parts[1]+ " Pengarang: "+ parts[2];
+                }
             }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public String cariBukuJudul(String judul){
+        try{
+            File file = new File("dataBuku.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(";");
+                if(parts[1].trim().equals(judul)){
+                    return "Kode Buku: "+ parts[0] + " Judul: "+ parts[1]+ " Pengarang: "+ parts[2];
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+    public String cariBukuPengarang(String pengarang){
+        try{
+            File file = new File("dataBuku.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                if(line.contains(pengarang)){
+                    String[] parts = line.split(";");
+                    return "Kode Buku: "+ parts[0] + " Judul: "+ parts[1]+ " Pengarang: "+ parts[2];
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -111,25 +164,25 @@ public class Perpustakaan {
 
     //Method untuk Tab Pengguna
     public void simpanPengguna(String nim, String nama, String prodi){
-        listPengguna.add(new Pengguna(nim, nama, prodi));
+        listMahasiswa.add(new Mahasiswa(nim, nama, prodi));
     }
     public String cariPengguna(String nim){
-        for (Pengguna pengguna : listPengguna) {
-            if(pengguna.getNim().equals(nim)){
-                return "NIM: "+ pengguna.getNim()+" Nama: "+pengguna.getNama()+" Prodi: "+pengguna.getProdi();
+        for (Mahasiswa mahasiswa : listMahasiswa) {
+            if(mahasiswa.getNim().equals(nim)){
+                return "NIM: "+ mahasiswa.getNim()+" Nama: "+ mahasiswa.getNama()+" Prodi: "+ mahasiswa.getProdi();
             }
         }
         return null;
     }
 
     public void editPengguna(String nim, String nama, String prodi) throws Exception{
-        for(Pengguna pengguna : listPengguna){
-            if(pengguna.getNim().equals(nim)){
-                pengguna.setNama(nama);
-                pengguna.setProdi(prodi);
+        for(Mahasiswa mahasiswa : listMahasiswa){
+            if(mahasiswa.getNim().equals(nim)){
+                mahasiswa.setNama(nama);
+                mahasiswa.setProdi(prodi);
             }
         }
-        File inputFile = new File("dataUser.txt");
+        File inputFile = new File("dataMahasiswa.txt");
         File tempFile = new File("userTemp.txt");
 
         try (
@@ -162,14 +215,14 @@ public class Perpustakaan {
     }
 
     public void hapusPengguna(String nim) throws Exception{
-        Iterator<Pengguna> iterator = listPengguna.iterator();
+        Iterator<Mahasiswa> iterator = listMahasiswa.iterator();
         while (iterator.hasNext()) {
-            Pengguna pengguna = iterator.next();
-            if (pengguna.getNim().equals(nim)) {
+            Mahasiswa mahasiswa = iterator.next();
+            if (mahasiswa.getNim().equals(nim)) {
                 iterator.remove();
             }
         }
-        File inputFile = new File("dataUser.txt");
+        File inputFile = new File("dataMahasiswa.txt");
         File tempFile = new File("userTemp.txt");
 
         try (
@@ -198,5 +251,6 @@ public class Perpustakaan {
         }
     }
     //Sampai Sini
+
 
 }
