@@ -31,7 +31,7 @@ class BukuInputGUI extends JFrame {
         jumlahField = new JTextField();
         add(jumlahField);
 
-        JButton LanjutButton = new JButton("Lanjut");
+        JButton LanjutButton = new JButton("Add");
         JButton SearchButton = new JButton("Search");
         JButton EditButton = new JButton("Edit");
         JButton DeleteButton = new JButton("Delete");
@@ -42,15 +42,21 @@ class BukuInputGUI extends JFrame {
 
         add(new JLabel());
 
-        LanjutButton.addActionListener(e -> prosesLanjut());
-        SearchButton.addActionListener(e -> search());
-        EditButton.addActionListener(e -> edit());
-        DeleteButton.addActionListener(e -> delete());
+        LanjutButton.addActionListener(e -> daftarBuku());
+        SearchButton.addActionListener(e -> searchBuku());
+        EditButton.addActionListener(e -> {
+            try {
+                editBuku();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage());
+            }
+        });
+        DeleteButton.addActionListener(e -> deleteBuku());
 
         setVisible(true);
     }
 
-    private void prosesLanjut() {
+    private void daftarBuku() {
         String kode = kodeField.getText().trim();
         String judul = judulField.getText().trim();
         String jumlahText = jumlahField.getText().trim();
@@ -71,7 +77,7 @@ class BukuInputGUI extends JFrame {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Jumlah pengarang harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        perpustakaan.SimpanBuku(kode,judul, pengarangSet);
+        perpustakaan.simpanBuku(kode,judul, pengarangSet);
     }
 
     public void inputNamaPengarang(String kode, String judul) {
@@ -91,7 +97,7 @@ class BukuInputGUI extends JFrame {
         }
     }
 
-    public void search(){
+    public void searchBuku(){
         try{
             String kode = kodeField.getText().trim();
             if(perpustakaan.cariBuku(kode) != null){
@@ -104,7 +110,7 @@ class BukuInputGUI extends JFrame {
             JOptionPane.showMessageDialog(null, "Kode Buku invalid!");
         }
     }
-    public void edit() {
+    public void editBuku() throws Exception {
         String kode = kodeField.getText().trim();
         String judul = judulField.getText().trim();
         String jumlahText = jumlahField.getText().trim();
@@ -127,7 +133,7 @@ class BukuInputGUI extends JFrame {
         }
     }
 
-    public void editNamaPengarang(String kode, String judul) {
+    public void editNamaPengarang(String kode, String judul) throws Exception{
         if (pengarangKe > jumlahPengarang) {
             JOptionPane.showMessageDialog(null, "Buku berhasil diedit!");
             return;
@@ -145,7 +151,7 @@ class BukuInputGUI extends JFrame {
         perpustakaan.editBuku(kode,judul, pengarangSet);
     }
 
-    public void delete() {
+    public void deleteBuku() {
         try {
             String kode = kodeField.getText().trim();
             perpustakaan.hapusBuku(kode);

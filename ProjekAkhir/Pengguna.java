@@ -1,15 +1,48 @@
 package semester2.ProjekAkhir;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Pengguna {
     private String nim;
     private String nama;
     private String prodi;
     private long denda = 0;
-
+    File penggunaFile = new File("dataUser.txt");
     public Pengguna(String nim, String nama, String prodi) {
         this.nim = nim;
         this.nama = nama;
         this.prodi = prodi;
+        try{
+            FileWriter fw = new FileWriter(penggunaFile, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            StringBuilder sb = new StringBuilder();
+            sb.append(nim).append(";")
+                    .append(nama).append(";")
+                    .append(prodi);
+            String hasil = sb.toString();
+            if (!hasil.isBlank()) {
+                bw.write(hasil);
+                bw.newLine();
+            }
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setNim(String nim) {
+        this.nim = nim;
+    }
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
+    public void setProdi(String prodi) {
+        this.prodi = prodi;
+    }
+    public void setDenda(long denda) {
+        this.denda = denda;
     }
 
     public String getNim() {

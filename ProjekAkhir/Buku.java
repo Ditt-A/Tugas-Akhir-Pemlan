@@ -20,14 +20,17 @@ public class Buku {
         this.judulBuku = judulBuku;
         this.Pengarang = Pengarang;
         try{
-            FileWriter fw = new FileWriter(bukuFile, true);
+            FileWriter fw = new FileWriter(bukuFile,true);
             BufferedWriter bw = new BufferedWriter(fw);
             StringBuilder sb = new StringBuilder();
             sb.append(kodeBuku).append(";")
                     .append(judulBuku).append(";")
                     .append(String.join(",", Pengarang));
-            bw.write(sb.toString());
-            bw.newLine();
+            String hasil = sb.toString();
+            if (!hasil.isBlank()) {
+                bw.write(hasil);
+                bw.newLine();
+            }
             bw.close();
         } catch (IOException e) {
             e.printStackTrace();
