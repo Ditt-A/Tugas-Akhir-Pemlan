@@ -1,24 +1,56 @@
 package semester2.ProjekAkhir;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.time.*;
 
 public class Buku {
-    private String idBuku;
+    private String kodeBuku;
     private String judulBuku;
     private TreeSet<String> Pengarang;
-    private String kodePeminjam = null;
-    private LocalDate tanggalDiPinjam = null;
     private boolean dipinjam = false;
+    File bukuFile = new File("Data/dataBuku.txt");
 
-    public Buku(String idBuku ,String judulBuku, TreeSet<String> Pengarang) {
-        this.idBuku = idBuku;
+
+    public Buku(String kodeBuku ,String judulBuku, TreeSet<String> Pengarang) {
+        this.kodeBuku = kodeBuku;
         this.judulBuku = judulBuku;
+        this.Pengarang = Pengarang;
+        try{
+            FileWriter fw = new FileWriter(bukuFile, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            StringBuilder sb = new StringBuilder();
+            String s = kodeBuku + ";" + judulBuku +";";
+            for(String str : Pengarang){
+                s += str + ",";
+            }
+            sb.append(s);
+            bw.write(sb.toString());
+            bw.newLine();
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setID(String id) {
+        this.kodeBuku = id;
+    }
+    public void setJudul(String judul) {
+        this.judulBuku = judul;
+    }
+    public void setStatus(boolean status) {
+        this.dipinjam = status;
+    }
+    public void setPengarang(TreeSet<String> Pengarang) {
         this.Pengarang = Pengarang;
     }
 
     public String getID() {
-        return this.idBuku;
+        return this.kodeBuku;
     }
 
     public String getJudul() {
@@ -37,26 +69,8 @@ public class Buku {
         return pengarang;
     }
 
-    public String getKodePeminjam() {
-        return this.kodePeminjam;
-    }
-    public LocalDate getTanggalPinjam() {
-        return this.tanggalDiPinjam;
-    }
-
-    public void setID(String id) {
-        this.idBuku = id;
-    }
-
-    public void setKodePeminjam(String kode) {
-        this.kodePeminjam = kode;
-    }
-    public void setTanggalPinjam(LocalDate n) {
-        this.tanggalDiPinjam = n;
-    }
-
     public String toString() {
-        return idBuku + ',' + judulBuku + ',' + getPengarang();
+        return kodeBuku + ',' + judulBuku + ',' + getPengarang();
     }
 
 

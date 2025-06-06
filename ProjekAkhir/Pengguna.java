@@ -28,9 +28,5 @@ public class Pengguna {
         return nim + "," + nama + "," + prodi;
     }
 
-    public static Pengguna fromString(String s) {
-        String[] a = s.split(",");
-        return new Pengguna(a[0], a[1], a[2]);
-    }
 
 }
