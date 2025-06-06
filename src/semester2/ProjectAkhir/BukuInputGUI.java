@@ -1,9 +1,9 @@
-package semester2.ProjekAkhir;
+package semester2.ProjectAkhir;
 import java.awt.*;
 import javax.swing.*;
-import java.util.ArrayList;
+// import java.util.ArrayList;
 import java.util.TreeSet;
-import java.awt.event.*;
+// import java.awt.event.*;
 
 class BukuInputGUI extends JFrame {
     private JTextField kodeField, judulField, jumlahField;
@@ -162,7 +162,7 @@ class BukuInputGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        BukuInputGUI gui = new BukuInputGUI();
+        SwingUtilities.invokeLater(() -> new BukuInputGUI().setVisible(true));
     }
 }
 

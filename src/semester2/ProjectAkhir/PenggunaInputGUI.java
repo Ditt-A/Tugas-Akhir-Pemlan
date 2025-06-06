@@ -1,8 +1,8 @@
-package semester2.ProjekAkhir;
+package semester2.ProjectAkhir;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.TreeSet;
+// import java.util.TreeSet;
 
 class PenggunaInputGUI extends JFrame {
     private JTextField nimField, namaField, prodiField;
@@ -110,6 +110,6 @@ class PenggunaInputGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        PenggunaInputGUI frame = new PenggunaInputGUI();
+        SwingUtilities.invokeLater(() -> new PenggunaInputGUI().setVisible(true));
     }
 }
