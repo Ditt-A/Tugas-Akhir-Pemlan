@@ -72,9 +72,11 @@ public class Perpustakaan {
     }
 
     public void hapusBuku(String kode) throws Exception{
-        for(Buku buku : listBuku){
-            if(buku.getID().equals(kode)){
-                listBuku.remove(buku);
+        Iterator<Buku> iterator = listBuku.iterator();
+        while (iterator.hasNext()) {
+            Buku buku = iterator.next();
+            if (buku.getID().equals(kode)) {
+                iterator.remove();
             }
         }
         File inputFile = new File("dataBuku.txt");
@@ -96,7 +98,7 @@ public class Perpustakaan {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new Exception("Buku gagal dihapus!");
         }
 
         if (inputFile.delete()) {
@@ -160,9 +162,11 @@ public class Perpustakaan {
     }
 
     public void hapusPengguna(String nim) throws Exception{
-        for (Pengguna pengguna : listPengguna) {
-            if(pengguna.getNim().equals(nim)){
-                listPengguna.remove(pengguna);
+        Iterator<Pengguna> iterator = listPengguna.iterator();
+        while (iterator.hasNext()) {
+            Pengguna pengguna = iterator.next();
+            if (pengguna.getNim().equals(nim)) {
+                iterator.remove();
             }
         }
         File inputFile = new File("dataUser.txt");
@@ -184,7 +188,7 @@ public class Perpustakaan {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new Exception("User gagal dihapus!");
         }
 
         if (inputFile.delete()) {

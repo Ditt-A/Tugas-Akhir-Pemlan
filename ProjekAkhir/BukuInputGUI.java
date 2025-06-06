@@ -157,7 +157,11 @@ class BukuInputGUI extends JFrame {
             perpustakaan.hapusBuku(kode);
             JOptionPane.showMessageDialog(null, "Buku berhasil didelete!");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+            String message = e.getMessage();
+            if (message == null || message.isBlank()) {
+                message = "Terjadi kesalahan saat menghapus buku.";
+            }
+            JOptionPane.showMessageDialog(this, message);
         }
     }
 

@@ -100,7 +100,11 @@ class PenggunaInputGUI extends JFrame {
             perpustakaan.hapusPengguna(nim);
             JOptionPane.showMessageDialog(null, "User berhasil didelete!");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+            String message = e.getMessage();
+            if (message == null || message.isBlank()) {
+                message = "Terjadi kesalahan saat menghapus User.";
+            }
+            JOptionPane.showMessageDialog(this, message);
         }
     }
     private void clearPengguna() {
