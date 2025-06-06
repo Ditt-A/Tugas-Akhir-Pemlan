@@ -70,6 +70,7 @@ public class Perpustakaan {
             throw new Exception("Buku gagal diedit!");
         }
     }
+
     public void hapusBuku(String kode) throws Exception{
         for(Buku buku : listBuku){
             if(buku.getID().equals(kode)){
@@ -157,6 +158,7 @@ public class Perpustakaan {
             throw new Exception("User gagal diedit!");
         }
     }
+
     public void hapusPengguna(String nim) throws Exception{
         for (Pengguna pengguna : listPengguna) {
             if(pengguna.getNim().equals(nim)){
@@ -191,4 +193,6 @@ public class Perpustakaan {
             throw new Exception("User gagal dihapus");
         }
     }
+    //Sampai Sini
+
 }
