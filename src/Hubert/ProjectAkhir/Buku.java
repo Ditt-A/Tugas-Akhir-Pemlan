@@ -11,21 +11,24 @@ public class Buku {
     private String kodeBuku;
     private String judulBuku;
     private TreeSet<String> Pengarang;
-    private boolean dipinjam = false;
+    private int jumlah;
     File bukuFile = new File("dataBuku.txt");
 
 
-    public Buku(String kodeBuku ,String judulBuku, TreeSet<String> Pengarang) {
+
+    public Buku(String kodeBuku ,String judulBuku, TreeSet<String> Pengarang, int jumlah) {
         this.kodeBuku = kodeBuku;
         this.judulBuku = judulBuku;
         this.Pengarang = Pengarang;
+        this.jumlah = jumlah;
         try{
             FileWriter fw = new FileWriter(bukuFile,true);
             BufferedWriter bw = new BufferedWriter(fw);
             StringBuilder sb = new StringBuilder();
             sb.append(kodeBuku).append(";")
                     .append(judulBuku).append(";")
-                    .append(getPengarang().toString().trim());
+                    .append(getPengarang().toString().trim()).append(";")
+                    .append(jumlah);
 
             String hasil = sb.toString();
             if (!hasil.isBlank()) {
@@ -44,9 +47,7 @@ public class Buku {
     public void setJudul(String judul) {
         this.judulBuku = judul;
     }
-    public void setStatus(boolean status) {
-        this.dipinjam = status;
-    }
+    public void setJumlah(int jumlah) { this.jumlah = jumlah; }
     public void setPengarang(TreeSet<String> Pengarang) {
         this.Pengarang = Pengarang;
     }
@@ -59,8 +60,8 @@ public class Buku {
         return this.judulBuku;
     }
 
-    public boolean getStatus() {
-        return this.dipinjam;
+    public int getJumlah(){
+        return this.jumlah;
     }
 
     public StringJoiner getPengarang() {
@@ -72,7 +73,7 @@ public class Buku {
     }
 
     public String toString() {
-        return kodeBuku + ',' + judulBuku + ',' + getPengarang();
+        return kodeBuku + ',' + judulBuku + ',' + getPengarang() + ',' + getJumlah();
     }
 
 

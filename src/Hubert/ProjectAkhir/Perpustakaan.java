@@ -1,8 +1,6 @@
 package semester2.src.Hubert.ProjectAkhir;
 
-import javax.swing.*;
 import java.io.*;
-import java.time.LocalDate;
 import java.util.*;
 
 
@@ -10,6 +8,7 @@ public class Perpustakaan {
     ArrayList<Buku> listBuku;
     ArrayList<Mahasiswa> listMahasiswa;
     HashMap<String, String> daftarPinjam;
+    File file = new File("dataBuku.txt");
 
     public Perpustakaan() {
         listBuku = new ArrayList<>();
@@ -18,26 +17,48 @@ public class Perpustakaan {
     }
 
     //Method untuk Tab Buku
-    public void simpanBuku(String kode, String judul, TreeSet<String> pengarang){
-        listBuku.add(new Buku(kode, judul, pengarang));
+    public void simpanBuku(String kode, String judul, TreeSet<String> pengarang, int i){
+        listBuku.add(new Buku(kode, judul, pengarang, i));
     }
 
     public String cariBuku(String kode){
-        for (Buku buku : listBuku) {
-            if(buku.getID().equals(kode)){
-                return "Kode Buku: "+ buku.getID() + " Judul: "+ buku.getJudul()+ " Pengarang: "+ buku.getPengarang();
+        try{
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(";");
+                if(parts[0].equals(kode)){
+                    return "Kode Buku: "+ parts[0] + " Judul: "+ parts[1]+ " Pengarang: "+ parts[2];
+                }
             }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+    public String cari(String kode){
+        try{
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(";");
+                if(parts[0].equals(kode)){
+                    return parts[0] +","+ parts[1] +","+ parts[2];
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
 
-    public void editBuku(String kode, String judul, TreeSet<String> pengarang) throws Exception{
-        for(Buku buku : listBuku){
-            if(buku.getID().equals(kode)){
-                buku.setJudul(judul);
-                buku.setPengarang(pengarang);
-            }
-        }
+    public void editBuku(String kode, String judul, TreeSet<String> pengarang, int i) throws Exception {
         File inputFile = new File("dataBuku.txt");
         File tempFile = new File("bukuTemp.txt");
 
@@ -46,14 +67,11 @@ public class Perpustakaan {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))
         ) {
             String currentLine;
-
             while ((currentLine = reader.readLine()) != null) {
-
-                String[] parts = currentLine.split(",");
-
+                String[] parts = currentLine.split(";");
                 if (parts.length > 0 && parts[0].equals(kode)) {
                     String pengarangGabung = String.join(",", pengarang);
-                    String lineBaru = kode + ";" + judul + ";" + pengarangGabung;
+                    String lineBaru = kode + ";" + judul + ";" + pengarangGabung + ";" + i;
                     writer.write(lineBaru);
                 } else {
                     writer.write(currentLine);
@@ -62,12 +80,11 @@ public class Perpustakaan {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            throw new Exception("Terjadi kesalahan saat menulis file.");
         }
 
-        if (inputFile.delete()) {
-            tempFile.renameTo(inputFile);
-        } else {
-            throw new Exception("Buku gagal diedit!");
+        if (!inputFile.delete() || !tempFile.renameTo(inputFile)) {
+            throw new Exception("Gagal menyimpan perubahan ke file!");
         }
     }
 
