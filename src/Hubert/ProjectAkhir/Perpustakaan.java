@@ -1,6 +1,10 @@
 package semester2.src.Hubert.ProjectAkhir;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 
@@ -58,33 +62,42 @@ public class Perpustakaan {
         return null;
     }
 
-    public void editBuku(String kode, String judul, TreeSet<String> pengarang, int i) throws Exception {
-        File inputFile = new File("dataBuku.txt");
-        File tempFile = new File("bukuTemp.txt");
+    public void editBuku(String kode, String judul, TreeSet<String> pengarang, int jumlah) throws Exception {
+        // Gunakan Path untuk representasi file yang lebih modern
+        Path inputFile = Paths.get("dataBuku.txt");
+        Path tempFile = Paths.get("bukuTemp.txt");
 
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))
-        ) {
+        try (BufferedReader reader = Files.newBufferedReader(inputFile);
+             BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
             String currentLine;
+            boolean bukuDitemukan = false;
+
             while ((currentLine = reader.readLine()) != null) {
-                String[] parts = currentLine.split(";");
+                String[] parts = currentLine.split(";", -1);
+
                 if (parts.length > 0 && parts[0].equals(kode)) {
                     String pengarangGabung = String.join(",", pengarang);
-                    String lineBaru = kode + ";" + judul + ";" + pengarangGabung + ";" + i;
-                    writer.write(lineBaru);
+                    writer.write(kode + ";" + judul + ";" + pengarangGabung + ";" + jumlah);
+                    bukuDitemukan = true;
                 } else {
                     writer.write(currentLine);
                 }
                 writer.newLine();
             }
+
+            if (!bukuDitemukan) {
+                throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new Exception("Terjadi kesalahan saat menulis file.");
+            throw new Exception("Terjadi kesalahan saat membaca/menulis file: " + e.getMessage());
         }
 
-        if (!inputFile.delete() || !tempFile.renameTo(inputFile)) {
-            throw new Exception("Gagal menyimpan perubahan ke file!");
+        try {
+            // SOLUSI: Pindahkan tempFile untuk menimpa inputFile
+            // StandardCopyOption.REPLACE_EXISTING memastikan file lama akan ditimpa.
+            Files.move(tempFile, inputFile, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new Exception("Gagal menyimpan perubahan ke file utama: " + e.getMessage());
         }
     }
 
