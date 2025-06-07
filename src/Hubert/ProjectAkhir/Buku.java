@@ -14,8 +14,6 @@ public class Buku {
     private int jumlah;
     File bukuFile = new File("dataBuku.txt");
 
-
-
     public Buku(String kodeBuku ,String judulBuku, TreeSet<String> Pengarang, int jumlah) {
         this.kodeBuku = kodeBuku;
         this.judulBuku = judulBuku;
@@ -36,6 +34,7 @@ public class Buku {
                 bw.newLine();
             }
             bw.close();
+            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

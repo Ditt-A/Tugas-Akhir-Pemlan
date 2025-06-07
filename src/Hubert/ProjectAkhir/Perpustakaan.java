@@ -33,27 +33,11 @@ public class Perpustakaan {
             while((line = br.readLine()) != null){
                 String[] parts = line.split(";");
                 if(parts[0].equals(kode)){
-                    return "Kode Buku: "+ parts[0] + " Judul: "+ parts[1]+ " Pengarang: "+ parts[2];
+                    return parts[0] + ";"+ parts[1]+ ";"+ parts[2]+";"+parts[3];
                 }
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-    public String cari(String kode){
-        try{
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            String line;
-            while((line = br.readLine()) != null){
-                String[] parts = line.split(";");
-                if(parts[0].equals(kode)){
-                    return parts[0] +","+ parts[1] +","+ parts[2];
-                }
-            }
+            br.close();
+            fr.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -62,8 +46,9 @@ public class Perpustakaan {
         return null;
     }
 
+
     public void editBuku(String kode, String judul, TreeSet<String> pengarang, int jumlah) throws Exception {
-        // Gunakan Path untuk representasi file yang lebih modern
+
         Path inputFile = Paths.get("dataBuku.txt");
         Path tempFile = Paths.get("bukuTemp.txt");
 
@@ -84,6 +69,8 @@ public class Perpustakaan {
                 }
                 writer.newLine();
             }
+            reader.close();
+            writer.close();
 
             if (!bukuDitemukan) {
                 throw new Exception("Buku dengan kode " + kode + " tidak ditemukan.");
@@ -93,8 +80,6 @@ public class Perpustakaan {
         }
 
         try {
-            // SOLUSI: Pindahkan tempFile untuk menimpa inputFile
-            // StandardCopyOption.REPLACE_EXISTING memastikan file lama akan ditimpa.
             Files.move(tempFile, inputFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new Exception("Gagal menyimpan perubahan ke file utama: " + e.getMessage());
@@ -102,11 +87,6 @@ public class Perpustakaan {
     }
 
     public void hapusBuku(String kode) throws Exception{
-        for(Buku buku : listBuku){
-            if(buku.getID().equals(kode)){
-                listBuku.remove(buku);
-            }
-        }
         File inputFile = new File("dataBuku.txt");
         File tempFile = new File("bukuTemp.txt");
 
@@ -125,6 +105,8 @@ public class Perpustakaan {
                 writer.write(currentLine);
                 writer.newLine();
             }
+            reader.close();
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

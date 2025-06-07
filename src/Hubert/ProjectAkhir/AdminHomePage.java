@@ -54,10 +54,13 @@ public class AdminHomePage extends JFrame{
         JButton btnEdit = new JButton("Edit");
         JButton btnSearch = new JButton("Search");
         JButton btnDelete = new JButton("Delete");
+        JButton refresh = new JButton("Refresh");
         buttonPanel.add(btnAdd);
         buttonPanel.add(btnEdit);
         buttonPanel.add(btnSearch);
         buttonPanel.add(btnDelete);
+        buttonPanel.add(refresh);
+
 
         modelBuku = new DefaultTableModel(new Object[]{"Kode", "Judul", "Pengarang", "Jumlah"}, 0);
         tableBuku = new JTable(modelBuku);
@@ -75,9 +78,11 @@ public class AdminHomePage extends JFrame{
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JTextField tfCari = new JTextField(20);
         JButton btnCari = new JButton("Cari");
+        JButton btnSort = new JButton("Sort by Day");
         topPanel.add(new JLabel("Cari:"));
         topPanel.add(tfCari);
         topPanel.add(btnCari);
+        topPanel.add(btnSort);
 
         modelTransaksi = new DefaultTableModel(new Object[]{"NIM", "Kode Buku", "Tanggal Pinjam", "Jam Pinjam"}, 0);
         tableTransaksi = new JTable(modelTransaksi);
@@ -94,14 +99,23 @@ public class AdminHomePage extends JFrame{
                 JOptionPane.showMessageDialog(null, ex.getMessage());
             }
         });
-        btnSearch.addActionListener(e -> cariBuku());
+
+        btnSearch.addActionListener(e -> {
+            try {
+                cariBuku();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage());
+            }
+        });
         btnDelete.addActionListener(e -> hapusBuku());
+        refresh.addActionListener(e -> tampilkanTabelBuku());
 
 
         // Tambahkan ke tabbedPane
         tabbedPane.addTab("Manajemen Buku", panelBuku);
         tabbedPane.addTab("Transaksi Mahasiswa", panelTransaksi);
-        tampilkanTabelBuku();
+
+        start();
 
         add(tabbedPane);
         setVisible(true);
@@ -133,6 +147,7 @@ public class AdminHomePage extends JFrame{
         try {
             perpustakaan.simpanBuku(Kode, Judul, pengarangSet, Integer.parseInt(Jumlah));
             tampilkanTabelBuku();
+            return;
         }catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
@@ -168,11 +183,16 @@ public class AdminHomePage extends JFrame{
                 String jumlah = parts[3].trim();
                 modelBuku.addRow(new Object[]{kode,judul, pengarang,jumlah});
             }
+            br.close();
+            fr.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    public void start(){
+        tampilkanTabelBuku();
     }
 
     private void editBuku() throws Exception {
@@ -200,10 +220,9 @@ public class AdminHomePage extends JFrame{
     }
 
     public void editNamaPengarang(String kode, String judul, int jumlahBuku) {
-        // BASE CASE: Semua nama pengarang sudah terkumpul
+
         if (pengarangKe > jumlah) {
             try {
-                // Panggil logika penyimpanan HANYA setelah semua nama ada
                 perpustakaan.editBuku(kode, judul, pengarangSet, jumlahBuku);
                 JOptionPane.showMessageDialog(null, "Buku berhasil diedit!");
                 tampilkanTabelBuku(); // Refresh tabel setelah berhasil disimpan
@@ -213,23 +232,42 @@ public class AdminHomePage extends JFrame{
             return;
         }
 
-        // RECURSIVE STEP: Minta nama pengarang berikutnya
         String nama = JOptionPane.showInputDialog(null, "Masukkan nama pengarang ke-" + pengarangKe + ":");
         if (nama != null && !nama.trim().isEmpty()) {
             pengarangSet.add(nama.trim());
             pengarangKe++;
-            editNamaPengarang(kode, judul, jumlahBuku); // Panggil diri sendiri untuk pengarang berikutnya
-        } else if (nama != null) { // Jika user klik OK tapi input kosong
+            editNamaPengarang(kode, judul, jumlahBuku);
+        } else if (nama != null) {
             JOptionPane.showMessageDialog(null, "Nama pengarang tidak boleh kosong.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            editNamaPengarang(kode, judul, jumlahBuku); // Ulangi pertanyaan untuk pengarang yang sama
+            editNamaPengarang(kode, judul, jumlahBuku);
         }
-        // Jika user klik Cancel (nama == null), proses berhenti.
-    }
-    private void cariBuku(){
 
+    }
+    private void cariBuku() throws Exception {
+        String kode = tfKode.getText().trim();
+        try {
+            String hasil = perpustakaan.cariBuku(kode);
+            if (hasil != null && !hasil.trim().isEmpty()) {
+                String[] baris = hasil.split(";");
+                modelBuku.setRowCount(0);
+
+                modelBuku.addRow(new Object[]{baris[0], baris[1], baris[2], baris[3]});
+            }else{
+                JOptionPane.showMessageDialog(this, "Buku tidak ditemukan!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     private void hapusBuku(){
-
+        String kode = tfKode.getText().trim();
+        try{
+            perpustakaan.hapusBuku(kode);
+            JOptionPane.showMessageDialog(null, "Buku berhasil dihapus!");
+            tampilkanTabelBuku();
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void main(String[] args) {

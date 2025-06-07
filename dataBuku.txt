@@ -1,2 +1,0 @@
-1;Hello World;Hubert, Orie;3
-2;Ayam;Hubert;2
