@@ -101,6 +101,7 @@ public class AdminLogIn extends JFrame {
             } else {
                 try {
                     if(operatorAdmin.cekAdmin(email1, nama1, password1)){
+                        JOptionPane.showMessageDialog(this, "Login Successfull", "Login Success", JOptionPane.INFORMATION_MESSAGE);
                         SwingUtilities.invokeLater(() -> new AdminHomePage().setVisible(true));
                         dispose();
                     }else{

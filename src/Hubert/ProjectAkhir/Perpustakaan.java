@@ -1,8 +1,6 @@
-package semester2.src.Hubert.ProjectAkhir;
+package semester2.ProjekAkhir;
 
-import javax.swing.*;
 import java.io.*;
-import java.time.LocalDate;
 import java.util.*;
 
 
@@ -18,15 +16,70 @@ public class Perpustakaan {
     }
 
     //Method untuk Tab Buku
-    public void simpanBuku(String kode, String judul, TreeSet<String> pengarang){
-        listBuku.add(new Buku(kode, judul, pengarang));
+    public void simpanBuku(String kode, String judul, TreeSet<String> pengarang, int jumlah) throws Exception{
+        for(Buku list : listBuku){
+            if(list.getID().equals(kode)){
+                throw new Exception("Kode Buku Sudah Ada!");
+            }
+        }
+        listBuku.add(new Buku(kode, judul, pengarang, jumlah));
     }
 
-    public String cariBuku(String kode){
-        for (Buku buku : listBuku) {
-            if(buku.getID().equals(kode)){
-                return "Kode Buku: "+ buku.getID() + " Judul: "+ buku.getJudul()+ " Pengarang: "+ buku.getPengarang();
+    public String cariBukuKode(String kode){
+        try{
+            File file = new File("dataBuku.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(";");
+                if(parts[0].trim().equals(kode)){
+                    return "Kode Buku: "+ parts[0] + " Judul: "+ parts[1]+ " Pengarang: "+ parts[2];
+                }
             }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public String cariBukuJudul(String judul){
+        try{
+            File file = new File("dataBuku.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(";");
+                if(parts[1].trim().equals(judul)){
+                    return "Kode Buku: "+ parts[0] + " Judul: "+ parts[1]+ " Pengarang: "+ parts[2];
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+    public String cariBukuPengarang(String pengarang){
+        try{
+            File file = new File("dataBuku.txt");
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+            while((line = br.readLine()) != null){
+                if(line.contains(pengarang)){
+                    String[] parts = line.split(";");
+                    return "Kode Buku: "+ parts[0] + " Judul: "+ parts[1]+ " Pengarang: "+ parts[2];
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -72,9 +125,11 @@ public class Perpustakaan {
     }
 
     public void hapusBuku(String kode) throws Exception{
-        for(Buku buku : listBuku){
-            if(buku.getID().equals(kode)){
-                listBuku.remove(buku);
+        Iterator<Buku> iterator = listBuku.iterator();
+        while (iterator.hasNext()) {
+            Buku buku = iterator.next();
+            if (buku.getID().equals(kode)) {
+                iterator.remove();
             }
         }
         File inputFile = new File("dataBuku.txt");
@@ -96,7 +151,7 @@ public class Perpustakaan {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new Exception("Buku gagal dihapus!");
         }
 
         if (inputFile.delete()) {
@@ -107,27 +162,27 @@ public class Perpustakaan {
     }
     //Sampai Sini
 
-    //Method untuk Tab Mahasiswa
-    public void simpanMahasiswa(String nim, String nama, String prodi){
+    //Method untuk Tab Pengguna
+    public void simpanPengguna(String nim, String nama, String prodi){
         listMahasiswa.add(new Mahasiswa(nim, nama, prodi));
     }
-    public String cariMahasiswa(String nim){
-        for (Mahasiswa pengguna : listMahasiswa) {
-            if(pengguna.getNim().equals(nim)){
-                return "NIM: "+ pengguna.getNim()+" Nama: "+pengguna.getNama()+" Prodi: "+pengguna.getProdi();
+    public String cariPengguna(String nim){
+        for (Mahasiswa mahasiswa : listMahasiswa) {
+            if(mahasiswa.getNim().equals(nim)){
+                return "NIM: "+ mahasiswa.getNim()+" Nama: "+ mahasiswa.getNama()+" Prodi: "+ mahasiswa.getProdi();
             }
         }
         return null;
     }
 
-    public void editMahasiswa(String nim, String nama, String prodi) throws Exception{
-        for(Mahasiswa pengguna : listMahasiswa){
-            if(pengguna.getNim().equals(nim)){
-                pengguna.setNama(nama);
-                pengguna.setProdi(prodi);
+    public void editPengguna(String nim, String nama, String prodi) throws Exception{
+        for(Mahasiswa mahasiswa : listMahasiswa){
+            if(mahasiswa.getNim().equals(nim)){
+                mahasiswa.setNama(nama);
+                mahasiswa.setProdi(prodi);
             }
         }
-        File inputFile = new File("dataUser.txt");
+        File inputFile = new File("dataMahasiswa.txt");
         File tempFile = new File("userTemp.txt");
 
         try (
@@ -159,13 +214,15 @@ public class Perpustakaan {
         }
     }
 
-    public void hapusMahasiswa(String nim) throws Exception{
-        for (Mahasiswa pengguna : listMahasiswa) {
-            if(pengguna.getNim().equals(nim)){
-                listMahasiswa.remove(pengguna);
+    public void hapusPengguna(String nim) throws Exception{
+        Iterator<Mahasiswa> iterator = listMahasiswa.iterator();
+        while (iterator.hasNext()) {
+            Mahasiswa mahasiswa = iterator.next();
+            if (mahasiswa.getNim().equals(nim)) {
+                iterator.remove();
             }
         }
-        File inputFile = new File("dataUser.txt");
+        File inputFile = new File("dataMahasiswa.txt");
         File tempFile = new File("userTemp.txt");
 
         try (
@@ -184,7 +241,7 @@ public class Perpustakaan {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new Exception("User gagal dihapus!");
         }
 
         if (inputFile.delete()) {
@@ -194,5 +251,6 @@ public class Perpustakaan {
         }
     }
     //Sampai Sini
+
 
 }

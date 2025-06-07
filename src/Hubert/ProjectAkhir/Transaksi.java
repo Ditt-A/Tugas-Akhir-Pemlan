@@ -7,9 +7,9 @@ public class Transaksi {
     private String kodeBuku;
     private LocalDate tanggalPinjam = null;
     private LocalTime jamPinjam = null;
-    private HashMap<String, String> daftarPinjaman;
+    private HashMap<String, List<HashMap<String, LocalDate>>> daftarPinjaman;
 
-    public Transaksi(String nim, String kodeBuku, LocalDate tanggalPinjam,LocalTime jamPinjam, HashMap<String, String> daftarPinjaman) {
+    public Transaksi(String nim, String kodeBuku, LocalDate tanggalPinjam,LocalTime jamPinjam, HashMap<String, List<HashMap<String, LocalDate>>> daftarPinjaman) {
         this.nim = nim;
         this.kodeBuku = kodeBuku;
         this.tanggalPinjam = tanggalPinjam;
@@ -28,7 +28,7 @@ public class Transaksi {
     public LocalTime getJamPinjam() {
         return jamPinjam;
     }
-    public HashMap<String, String> getDaftarPinjaman() {
+    public HashMap<String, List<HashMap<String, LocalDate>>> getDaftarPinjaman() {
         return daftarPinjaman;
     }
 

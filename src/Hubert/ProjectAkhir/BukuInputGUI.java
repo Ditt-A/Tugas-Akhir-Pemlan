@@ -87,7 +87,7 @@ class BukuInputGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Jumlah pengarang harus angka > 0!", "Error", JOptionPane.ERROR_MESSAGE);
         }
         try {
-            perpustakaan.simpanBuku(kode, judul, pengarangSet);
+//            perpustakaan.simpanBuku(kode, judul, pengarangSet,jumlah);
             tampilkanTabelBuku();
         }catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
