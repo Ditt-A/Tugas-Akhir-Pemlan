@@ -1,5 +1,8 @@
-package semester2.ProjekAkhir;
-import java.io.*;
+package semester2.src.Hubert.ProjectAkhir;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 public class OperatorAdmin {
     List<Admin> adminList;
@@ -23,13 +26,19 @@ public class OperatorAdmin {
         }
         return false;
     }
-
     public void daftarAdmin(String email, String nama, String password) throws Exception {
-        for(Admin admin : adminList){
-            if(admin.getEmail().equals(email)){
-                throw new Exception("Admin Sudah Ada!");
+        try{
+            if(cekAdmin(email, nama, password)){
+                throw new Exception("Admin sudah terdaftar!");
+            }else {
+                FileWriter fw = new FileWriter(adminFile, true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(email + ";" + nama + ";" + password);
+                bw.newLine();
+                bw.close();
             }
+        }catch(Exception e){
+            throw new Exception(e.getMessage());
         }
-        adminList.add(new Admin(email, nama, password));
     }
 }

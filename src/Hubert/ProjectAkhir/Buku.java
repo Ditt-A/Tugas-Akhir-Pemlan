@@ -1,4 +1,4 @@
-package semester2.ProjekAkhir;
+package semester2.src.Hubert.ProjectAkhir;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,6 +35,7 @@ public class Buku {
                 bw.newLine();
             }
             bw.close();
+            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,7 +47,7 @@ public class Buku {
     public void setJudul(String judul) {
         this.judulBuku = judul;
     }
-
+    public void setJumlah(int jumlah) { this.jumlah = jumlah; }
     public void setPengarang(TreeSet<String> Pengarang) {
         this.Pengarang = Pengarang;
     }
@@ -59,7 +60,9 @@ public class Buku {
         return this.judulBuku;
     }
 
-
+    public int getJumlah(){
+        return this.jumlah;
+    }
 
     public StringJoiner getPengarang() {
         StringJoiner pengarang = new StringJoiner(", ");
@@ -70,7 +73,7 @@ public class Buku {
     }
 
     public String toString() {
-        return kodeBuku + ',' + judulBuku + ',' + getPengarang();
+        return kodeBuku + ',' + judulBuku + ',' + getPengarang() + ',' + getJumlah();
     }
 
 
